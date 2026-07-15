@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+
+{% block title %}Search Facilities — EmergencyRx{% endblock %}
+
+{% block content %}
+<section class="how-section" style="padding-top:8rem;">
+  <div class="container">
+    <div class="row justify-content-center text-center mb-5">
+      <div class="col-lg-7" data-aos="fade-up">
+        <span class="section-tag">Find Help Nearby</span>
+        <h2 class="section-title mb-3">Search Blood Banks &amp; Hospitals</h2>
+        <p class="section-subtitle">Filter by state, LGA, blood type, or facility type — every result is a verified facility.</p>
+      </div>
+    </div>
+
+    <form method="get" class="row g-3 justify-content-center mb-5" data-aos="fade-up">
+      <div class="col-md-3">
+        <select name="state" class="field-control">
+          <option value="">All States</option>
+          {% for s in states %}
+          <option value="{{ s }}" {% if s == state %}selected{% endif %}>{{ s }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-md-3">
+        <input type="text" name="lga" class="field-control" placeholder="Local Government Area" value="{{ lga }}" />
+      </div>
+      <div class="col-md-2">
+        <select name="blood_type" class="field-control">
+          <option value="">Any Blood Type</option>
+          {% for code, label in blood_type_choices %}
+          <option value="{{ code }}" {% if code == blood_type %}selected{% endif %}>{{ label }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-md-2">
+        <select name="facility_type" class="field-control">
+          <option value="">Any Type</option>
+          {% for code, label in facility_type_choices %}
+          <option value="{{ code }}" {% if code == facility_type %}selected{% endif %}>{{ label }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-md-2">
+        <button type="submit" class="btn-rx btn-rx-primary w-100 justify-content-center">
+          <i class="fas fa-search"></i> Search
+        </button>
+      </div>
+    </form>
+
+    <div class="row g-4">
+      {% for facility in results %}
+      <div class="col-lg-4 col-md-6" data-aos="fade-up">
+        <div class="step-card text-start h-100">
+          <div class="d-flex justify-content-between align-items-start mb-2">
+            <h5 class="mb-0">
+              {{ facility.name }}
+              {% if facility.is_verified %}
+              <i class="fas fa-badge-check ms-1" style="color:var(--primary);" title="Verified Facility"></i>
+              {% endif %}
+            </h5>
+            <span class="badge rounded-pill" style="background:var(--primary-light);color:var(--primary);">{{ facility.get_facility_type_display }}</span>
+          </div>
+          <p class="mb-2" style="font-size:0.88rem;color:var(--gray);">
+            <i class="fas fa-map-marker-alt me-1" style="color:var(--primary);"></i>{{ facility.lga }}, {{ facility.state }}
+          </p>
+          <p class="mb-2" style="font-size:0.88rem;color:var(--gray);">
+            <i class="fas fa-phone me-1" style="color:var(--primary);"></i>{{ facility.phone }}
+          </p>
+          {% with stocks=facility.blood_stocks.all %}
+          {% if stocks %}
+          <div class="d-flex flex-wrap gap-1 mt-2">
+            {% for stock in stocks %}
+              {% if stock.units_available > 0 %}
+              <span class="badge rounded-pill" style="background:var(--light);color:var(--secondary);border:1px solid var(--border);">{{ stock.blood_type }} · {{ stock.units_available }}</span>
+              {% endif %}
+            {% endfor %}
+          </div>
+          {% endif %}
+          {% endwith %}
+        </div>
+      </div>
+      {% empty %}
+      <div class="col-12 text-center py-5">
+        {% if searched %}
+        <p class="section-subtitle">No verified facilities match those filters yet. Try widening your search.</p>
+        {% else %}
+        <p class="section-subtitle">Use the filters above to find a blood bank, hospital, or clinic near you.</p>
+        {% endif %}
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endblock %}

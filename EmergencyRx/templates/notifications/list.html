@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block title %}Notifications — EmergencyRx{% endblock %}
+
+{% block content %}
+<section class="how-section" style="padding-top:8rem;">
+  <div class="container" style="max-width:720px;">
+    <span class="section-tag">Alerts</span>
+    <h2 class="section-title mb-4">Notifications</h2>
+
+    {% for notification in notifications %}
+    <div class="step-card text-start mb-3{% if not notification.is_read %} border-start border-4{% endif %}"
+      style="{% if not notification.is_read %}border-color:var(--primary) !important;{% endif %}">
+      <div class="d-flex justify-content-between align-items-start gap-2">
+        <div>
+          {% if notification.notif_type == 'match_found' %}
+          <h6 class="mb-1"><i class="fas fa-circle-check me-1" style="color:var(--success);"></i>Matching Facility Found</h6>
+          {% else %}
+          <h6 class="mb-1"><i class="fas fa-satellite-dish me-1" style="color:var(--primary);"></i>{{ notification.get_notif_type_display }}</h6>
+          {% endif %}
+          {% if notification.facility %}
+          <div class="mb-1" style="font-size:0.9rem;">
+            <strong>{{ notification.facility.name }}</strong>
+            {% if notification.facility.is_verified %}
+            <i class="fas fa-badge-check ms-1" style="color:var(--primary);" title="Verified Facility"></i>
+            {% endif %}
+            <span style="color:var(--gray);"><i class="fas fa-map-marker-alt ms-1 me-1"></i>{{ notification.facility.lga }}, {{ notification.facility.state }}</span>
+          </div>
+          {% endif %}
+          <p class="mb-1">{{ notification.message }}</p>
+          <div style="font-size:0.8rem;color:var(--gray);">{{ notification.created_at|date:"M d, Y H:i" }}</div>
+        </div>
+        {% if notification.emergency_request_id %}
+        <a href="{% url 'request_status' notification.emergency_request_id %}" class="btn-rx btn-rx-outline-primary" style="padding:0.4rem 1rem;font-size:0.82rem;white-space:nowrap;">
+          View Request
+        </a>
+        {% endif %}
+      </div>
+    </div>
+    {% empty %}
+    <p class="section-subtitle">You have no notifications yet. We'll let you know as soon as a matching facility is found for your request.</p>
+    <a href="{% url 'request_create' %}" class="btn-rx btn-rx-primary mt-2"><i class="fas fa-satellite-dish"></i> Submit a Request</a>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

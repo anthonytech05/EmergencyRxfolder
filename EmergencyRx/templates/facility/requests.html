@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block title %}Incoming Requests — {{ facility.name }}{% endblock %}
+
+{% block content %}
+<section class="how-section" style="padding-top:8rem;">
+  <div class="container" style="max-width:880px;">
+    <span class="section-tag">{{ facility.name }}</span>
+    <h2 class="section-title mb-4">Incoming Emergency Requests</h2>
+
+    {% for broadcast in broadcasts %}
+    <div class="step-card text-start mb-3">
+      <div class="d-flex justify-content-between align-items-start flex-wrap gap-2 mb-2">
+        <div>
+          <strong>{{ broadcast.request.units_needed }} unit(s) — {{ broadcast.request.blood_type|default:broadcast.request.supply_name }}</strong>
+          <div style="font-size:0.85rem;color:var(--gray);">
+            {{ broadcast.request.location_text }}, {{ broadcast.request.lga }}, {{ broadcast.request.state }}
+            &middot; {{ broadcast.get_response_display }}
+            &middot; {{ broadcast.sent_at|date:"M d, Y H:i" }}
+          </div>
+        </div>
+        <span class="badge rounded-pill px-3 py-2" style="background:{% if broadcast.request.urgency == 'critical' %}#fde8e8;color:#b13030;{% elif broadcast.request.urgency == 'urgent' %}#fff7e6;color:#a67c00;{% else %}#f1f1f1;color:var(--gray);{% endif %}">
+          {{ broadcast.request.get_urgency_display }}
+        </span>
+      </div>
+
+      {% if broadcast.request.description %}
+      <p style="font-size:0.88rem;color:var(--gray);">{{ broadcast.request.description }}</p>
+      {% endif %}
+
+      {% if broadcast.response == 'pending' %}
+      <form method="post" action="{% url 'facility_respond' broadcast.id %}" class="d-flex gap-2 mt-2">
+        {% csrf_token %}
+        <button type="submit" name="decision" value="available" class="btn-rx btn-rx-primary" style="font-size:0.85rem;padding:0.5rem 1.2rem;">
+          <i class="fas fa-check"></i> We Have It
+        </button>
+        <button type="submit" name="decision" value="unavailable" class="btn-rx btn-rx-outline-primary" style="font-size:0.85rem;padding:0.5rem 1.2rem;">
+          <i class="fas fa-xmark"></i> Not Available
+        </button>
+      </form>
+      {% endif %}
+    </div>
+    {% empty %}
+    <p class="section-subtitle">No incoming requests yet — keep your stock updated to appear in more searches.</p>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

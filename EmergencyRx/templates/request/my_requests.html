@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block title %}My Requests — EmergencyRx{% endblock %}
+
+{% block content %}
+<section class="how-section" style="padding-top:8rem;">
+  <div class="container" style="max-width:840px;">
+    <span class="section-tag">Your History</span>
+    <h2 class="section-title mb-4">My Emergency Requests</h2>
+
+    {% for req in requests %}
+    <div class="step-card text-start mb-3 d-flex justify-content-between align-items-center flex-wrap gap-2">
+      <div>
+        <strong>{{ req.units_needed }} unit(s) — {{ req.blood_type|default:req.supply_name }}</strong>
+        <div style="font-size:0.85rem;color:var(--gray);">{{ req.lga }}, {{ req.state }} · {{ req.created_at|date:"M d, Y H:i" }}</div>
+      </div>
+      <div class="d-flex align-items-center gap-2">
+        <span class="badge rounded-pill px-3 py-2"
+          style="background:{% if req.status == 'fulfilled' %}var(--primary-light);color:var(--primary-dark);{% elif req.status == 'broadcasting' %}#fff7e6;color:#a67c00;{% else %}#f1f1f1;color:var(--gray);{% endif %}">
+          {{ req.get_status_display }}
+        </span>
+        <a href="{% url 'request_status' req.pk %}" class="btn-rx btn-rx-outline-primary" style="padding:0.4rem 1rem;font-size:0.82rem;">View</a>
+      </div>
+    </div>
+    {% empty %}
+    <p class="section-subtitle">You haven't submitted any requests yet.</p>
+    <a href="{% url 'request_create' %}" class="btn-rx btn-rx-primary mt-2"><i class="fas fa-satellite-dish"></i> Submit a Request</a>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

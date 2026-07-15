@@ -1,0 +1,22 @@
+asgiref==3.11.1
+Django==6.0.6
+sqlparse==0.5.5
+tzdata==2026.2
+Pillow==12.3.0
+psycopg2==2.9.12
+certifi==2026.6.17 
+charset_normalizer==3.4.9 
+idna==3.18 
+requests==2.34.2 
+urllib3==2.7.0
+python-dotenv==1.2.2
+brotli==1.2.0 
+whitenoise==6.12.0
+psycopg2-binary==2.9.12
+dj-database-url==3.1.2
+gunicorn==26.0.0
+uvicorn==0.51.0
+
+
+# Needed once you connect Django to PostgreSQL (see settings.py DATABASES)
+psycopg2-binary==2.9.10

@@ -1,0 +1,117 @@
+{% extends 'base.html' %}
+
+{% block title %}Log In — EmergencyRx{% endblock %}
+
+{% block content %}
+<div class="auth-page">
+  <div class="row g-0 w-100">
+
+    <!-- LEFT: Brand Panel -->
+    <div class="col-lg-5 d-none d-lg-flex">
+      <div class="auth-left auth-left-login w-100">
+        <div class="auth-left-logo">
+          <i class="fa-solid fa-heart-pulse me-1"></i>Emergency<span class="brand-rx">Rx</span>
+        </div>
+        <h2>Welcome Back.<br>Lives Are <span>Waiting.</span></h2>
+        <p>Log back in to access real-time blood and medical supply information, manage your emergency requests, and stay connected to Nigeria's emergency network.</p>
+
+        <div class="stat-pill"><i class="fas fa-tint"></i> Blood available across Nigeria right now</div>
+        <div class="stat-pill"><i class="fas fa-hospital"></i> Verified facilities on the platform</div>
+        <div class="stat-pill"><i class="fas fa-clock"></i> Average response under 10 minutes</div>
+        <div class="stat-pill"><i class="fas fa-shield-halved"></i> Your data is always encrypted &amp; safe</div>
+      </div>
+    </div>
+
+    <!-- RIGHT: Login Form -->
+    <div class="col-lg-7">
+      <div class="auth-right">
+        <div class="auth-right-inner">
+
+          <a href="{% url 'home' %}" class="back-home-link"><i class="fas fa-arrow-left"></i> Back to Home</a>
+
+          <div class="d-lg-none mb-4" style="font-size:1.5rem;font-weight:800;color:var(--secondary);">
+            <i class="fa-solid fa-heart-pulse me-1" style="color:var(--primary);"></i>Emergency<span style="color:var(--primary);">Rx</span>
+          </div>
+
+          <h3>Log In to Your Account</h3>
+          <p class="auth-sub">Don't have an account yet? <a href="{% url 'signup' %}">Sign up free</a></p>
+
+          <form method="post" action="{% url 'login' %}" novalidate>
+            {% csrf_token %}
+
+            <div class="field-group">
+              <label class="field-label" for="id_username">Username <span class="req">*</span></label>
+              <input type="text" name="username" id="id_username"
+                class="field-control {% if form.errors %}is-invalid{% endif %}"
+                placeholder="Your username"
+                autocomplete="username"
+                value="{{ form.data.username|default:'' }}" required />
+            </div>
+
+            <div class="field-group">
+              <div class="d-flex justify-content-between align-items-center mb-1">
+                <label class="field-label mb-0" for="id_password">Password <span class="req">*</span></label>
+                <a href="#" class="forgot-link">Forgot password?</a>
+              </div>
+              <div style="position:relative;">
+                <input type="password" name="password" id="id_password"
+                  class="field-control {% if form.errors %}is-invalid{% endif %}"
+                  placeholder="Your password"
+                  autocomplete="current-password" required />
+                <button type="button" id="togglePwd" class="toggle-pwd">
+                  <i class="fas fa-eye" id="pwdIcon"></i>
+                </button>
+              </div>
+              {% if form.errors %}
+                <div class="field-error mt-1">
+                  <i class="fas fa-exclamation-circle"></i> Invalid username or password. Please try again.
+                </div>
+              {% endif %}
+            </div>
+
+            <div class="d-flex align-items-center gap-2 mb-1" style="font-size:0.88rem;color:var(--gray);">
+              <input type="checkbox" id="rememberMe" style="width:16px;height:16px;accent-color:var(--primary);cursor:pointer;" />
+              <label for="rememberMe" style="cursor:pointer;margin:0;">Keep me logged in</label>
+            </div>
+
+            {% if form.non_field_errors %}
+              <div class="alert alert-danger rounded-3 py-2 px-3 mt-2" style="font-size:0.85rem;">
+                {% for error in form.non_field_errors %}
+                  <div><i class="fas fa-exclamation-circle me-1"></i>{{ error }}</div>
+                {% endfor %}
+              </div>
+            {% endif %}
+
+            <button type="submit" class="submit-btn">
+              <i class="fas fa-right-to-bracket"></i> Log In
+            </button>
+
+            <p style="font-size:0.82rem;color:var(--gray);text-align:center;margin-top:1.2rem;line-height:1.6;">
+              Are you a hospital or blood bank?
+              <a href="{% url 'signup' %}" style="color:var(--primary);font-weight:600;text-decoration:none;">Register your facility</a>
+            </p>
+          </form>
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  document.getElementById('togglePwd').addEventListener('click', function () {
+    var input = document.getElementById('id_password');
+    var icon  = document.getElementById('pwdIcon');
+    if (input.type === 'password') {
+      input.type = 'text';
+      icon.classList.replace('fa-eye', 'fa-eye-slash');
+    } else {
+      input.type = 'password';
+      icon.classList.replace('fa-eye-slash', 'fa-eye');
+    }
+  });
+</script>
+{% endblock %}

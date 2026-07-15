@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block title %}Share Your Story — EmergencyRx{% endblock %}
+
+{% block content %}
+<section class="auth-page" style="min-height:auto;padding:8rem 0 4rem;">
+  <div class="container" style="max-width:640px;">
+    <span class="section-tag">Real Stories</span>
+    <h3 class="mb-1">Share Your Story</h3>
+    <p class="auth-sub">Tell other Nigerians how EmergencyRx worked for you — your testimony may be featured on our homepage.</p>
+
+    <form method="post" novalidate>
+      {% csrf_token %}
+
+      <div class="field-group">
+        <label class="field-label">Your Story <span class="req">*</span></label>
+        <textarea name="quote" rows="4" class="field-control {% if form.quote.errors %}is-invalid{% endif %}"
+                  placeholder="Tell us how EmergencyRx helped you...">{{ form.quote.value|default:'' }}</textarea>
+        {% if form.quote.errors %}<div class="field-error"><i class="fas fa-exclamation-circle"></i>{{ form.quote.errors.0 }}</div>{% endif %}
+      </div>
+
+      <div class="row g-3">
+        <div class="col-md-6">
+          <div class="field-group">
+            <label class="field-label">Rating <span class="req">*</span></label>
+            <select name="rating" class="field-control" required>
+              {% for code, label in form.fields.rating.choices %}
+                <option value="{{ code }}" {% if form.rating.value|default:5|stringformat:"s" == code|stringformat:"s" %}selected{% endif %}>{{ label }}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="field-group">
+            <label class="field-label">Your Location <span style="font-weight:400;color:var(--gray);">(optional)</span></label>
+            <input type="text" name="location" class="field-control" placeholder="e.g. Lagos, Nigeria" value="{{ form.location.value|default:'' }}" />
+          </div>
+        </div>
+      </div>
+
+      {% if form.non_field_errors %}
+        <div class="alert alert-danger rounded-3 py-2 px-3 mt-2" style="font-size:0.85rem;">
+          {% for error in form.non_field_errors %}<div><i class="fas fa-exclamation-circle me-1"></i>{{ error }}</div>{% endfor %}
+        </div>
+      {% endif %}
+
+      <button type="submit" class="submit-btn">
+        <i class="fas fa-paper-plane"></i> Submit My Story
+      </button>
+    </form>
+  </div>
+</section>
+{% endblock %}

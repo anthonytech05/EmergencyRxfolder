@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+
+{% block title %}Manage Inventory — {{ facility.name }}{% endblock %}
+
+{% block content %}
+<section class="how-section" style="padding-top:8rem;">
+  <div class="container" style="max-width:960px;">
+    <span class="section-tag">{{ facility.name }}</span>
+    <h2 class="section-title mb-4">Manage Inventory</h2>
+
+    <div class="row g-4">
+      <div class="col-lg-6">
+        <h5 class="mb-3">Blood Stock</h5>
+        {% for stock in blood_stocks %}
+        <form method="post" action="{% url 'blood_stock_save' %}" class="d-flex align-items-center gap-2 mb-2">
+          {% csrf_token %}
+          <input type="hidden" name="stock_id" value="{{ stock.id }}" />
+          <input type="hidden" name="blood_type" value="{{ stock.blood_type }}" />
+          <span style="width:52px;font-weight:700;">{{ stock.blood_type }}</span>
+          <input type="number" name="units_available" min="0" value="{{ stock.units_available }}" class="field-control" style="padding:0.5rem;" />
+          <input type="date" name="expiry_date" value="{{ stock.expiry_date|date:'Y-m-d' }}" class="field-control" style="padding:0.5rem;" />
+          <button type="submit" class="btn-rx btn-rx-outline-primary" style="font-size:0.8rem;padding:0.5rem 1rem;">Save</button>
+        </form>
+        {% empty %}
+        <p class="section-subtitle">No blood types added yet — add one below.</p>
+        {% endfor %}
+
+        <form method="post" action="{% url 'blood_stock_save' %}" class="step-card text-start mt-3">
+          {% csrf_token %}
+          <label class="field-label">Add / Update Blood Type</label>
+          <div class="d-flex gap-2">
+            <select name="blood_type" class="field-control">
+              {% for code, label in blood_form.fields.blood_type.choices %}
+              <option value="{{ code }}">{{ label }}</option>
+              {% endfor %}
+            </select>
+            <input type="number" name="units_available" min="0" placeholder="Units" class="field-control" required />
+          </div>
+          <input type="date" name="expiry_date" class="field-control mt-2" />
+          <button type="submit" class="btn-rx btn-rx-primary mt-2" style="font-size:0.85rem;">
+            <i class="fas fa-plus"></i> Save Blood Stock
+          </button>
+        </form>
+      </div>
+
+      <div class="col-lg-6">
+        <h5 class="mb-3">Medical Supplies</h5>
+        {% for supply in medical_supplies %}
+        <form method="post" action="{% url 'medical_supply_save' %}" class="d-flex align-items-center gap-2 mb-2">
+          {% csrf_token %}
+          <input type="hidden" name="supply_id" value="{{ supply.id }}" />
+          <input type="hidden" name="supply_name" value="{{ supply.supply_name }}" />
+          <input type="hidden" name="category" value="{{ supply.category }}" />
+          <input type="hidden" name="unit_of_measure" value="{{ supply.unit_of_measure }}" />
+          <span style="flex:1;font-weight:600;font-size:0.88rem;">{{ supply.supply_name }}</span>
+          <input type="number" name="quantity" min="0" value="{{ supply.quantity }}" class="field-control" style="padding:0.5rem;width:90px;" />
+          <label class="d-flex align-items-center gap-1" style="font-size:0.8rem;">
+            <input type="checkbox" name="is_available" {% if supply.is_available %}checked{% endif %} /> Available
+          </label>
+          <button type="submit" class="btn-rx btn-rx-outline-primary" style="font-size:0.8rem;padding:0.5rem 1rem;">Save</button>
+        </form>
+        {% empty %}
+        <p class="section-subtitle">No supplies added yet — add one below.</p>
+        {% endfor %}
+
+        <form method="post" action="{% url 'medical_supply_save' %}" class="step-card text-start mt-3">
+          {% csrf_token %}
+          <label class="field-label">Add Supply</label>
+          <input type="text" name="supply_name" placeholder="e.g. Oxygen Cylinder" class="field-control mb-2" required />
+          <div class="d-flex gap-2">
+            <select name="category" class="field-control">
+              {% for code, label in supply_form.fields.category.choices %}
+              <option value="{{ code }}">{{ label }}</option>
+              {% endfor %}
+            </select>
+            <input type="number" name="quantity" min="0" placeholder="Qty" class="field-control" required />
+          </div>
+          <input type="text" name="unit_of_measure" placeholder="Unit (e.g. cylinders, vials)" class="field-control mt-2" />
+          <button type="submit" class="btn-rx btn-rx-primary mt-2" style="font-size:0.85rem;">
+            <i class="fas fa-plus"></i> Save Supply
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

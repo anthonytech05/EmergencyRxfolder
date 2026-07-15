@@ -1,0 +1,226 @@
+{% extends 'base.html' %}
+
+{% block title %}Create Your Account — EmergencyRx{% endblock %}
+
+{% block content %}
+<div class="auth-page">
+  <div class="row g-0 w-100">
+
+    <!-- LEFT: Brand Panel -->
+    <div class="col-lg-5 d-none d-lg-flex">
+      <div class="auth-left auth-left-signup w-100">
+        <div class="auth-left-logo">
+          <i class="fa-solid fa-heart-pulse me-1"></i>Emergency<span class="brand-rx">Rx</span>
+        </div>
+        <h2>Join Nigeria's Emergency<br><span>Medical Network.</span></h2>
+        <p>Create a free account and access blood banks, medical supplies, and emergency services across the country — in real time.</p>
+
+        <div class="auth-perk">
+          <div class="auth-perk-icon"><i class="fas fa-bolt"></i></div>
+          <div class="auth-perk-text">
+            <strong>Instant Broadcasts</strong>
+            <span>Your request reaches every nearby facility in seconds</span>
+          </div>
+        </div>
+        <div class="auth-perk">
+          <div class="auth-perk-icon"><i class="fas fa-shield-halved"></i></div>
+          <div class="auth-perk-text">
+            <strong>Verified Facilities Only</strong>
+            <span>Every hospital on our platform is manually verified</span>
+          </div>
+        </div>
+        <div class="auth-perk">
+          <div class="auth-perk-icon"><i class="fas fa-id-card"></i></div>
+          <div class="auth-perk-text">
+            <strong>Get an Emergency Card</strong>
+            <span>Order your personal medical ID card for just ₦1,000</span>
+          </div>
+        </div>
+        <div class="auth-perk">
+          <div class="auth-perk-icon"><i class="fas fa-map-location-dot"></i></div>
+          <div class="auth-perk-text">
+            <strong>Nationwide Coverage</strong>
+            <span>Facilities in all 36 states and the FCT</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: Form Panel -->
+    <div class="col-lg-7">
+      <div class="auth-right">
+        <div class="auth-right-inner">
+
+          <a href="{% url 'home' %}" class="back-home-link"><i class="fas fa-arrow-left"></i> Back to Home</a>
+
+          <div class="d-lg-none mb-4" style="font-size:1.5rem;font-weight:800;color:var(--secondary);">
+            <i class="fa-solid fa-heart-pulse me-1" style="color:var(--primary);"></i>Emergency<span style="color:var(--primary);">Rx</span>
+          </div>
+
+          <h3>Create Your Account</h3>
+          <p class="auth-sub">Already have an account? <a href="{% url 'login' %}">Log in here</a></p>
+
+          <form method="post" action="{% url 'signup' %}" novalidate>
+            {% csrf_token %}
+
+            <div class="row g-3">
+              <div class="col-6">
+                <div class="field-group">
+                  <label class="field-label" for="id_first_name">First Name <span class="req">*</span></label>
+                  <input type="text" name="first_name" id="id_first_name"
+                    class="field-control {% if form.first_name.errors %}is-invalid{% endif %}"
+                    placeholder="First name"
+                    value="{{ form.first_name.value|default:'' }}"
+                    autocomplete="given-name" required />
+                  {% if form.first_name.errors %}
+                    <div class="field-error"><i class="fas fa-exclamation-circle"></i>{{ form.first_name.errors.0 }}</div>
+                  {% endif %}
+                </div>
+              </div>
+              <div class="col-6">
+                <div class="field-group">
+                  <label class="field-label" for="id_last_name">Last Name <span class="req">*</span></label>
+                  <input type="text" name="last_name" id="id_last_name"
+                    class="field-control {% if form.last_name.errors %}is-invalid{% endif %}"
+                    placeholder="Last name"
+                    value="{{ form.last_name.value|default:'' }}"
+                    autocomplete="family-name" required />
+                  {% if form.last_name.errors %}
+                    <div class="field-error"><i class="fas fa-exclamation-circle"></i>{{ form.last_name.errors.0 }}</div>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+
+            <div class="field-group">
+              <label class="field-label" for="id_username">Username <span class="req">*</span></label>
+              <input type="text" name="username" id="id_username"
+                class="field-control {% if form.username.errors %}is-invalid{% endif %}"
+                placeholder="Choose a username"
+                value="{{ form.username.value|default:'' }}"
+                autocomplete="username" required />
+              {% if form.username.errors %}
+                <div class="field-error"><i class="fas fa-exclamation-circle"></i>{{ form.username.errors.0 }}</div>
+              {% endif %}
+            </div>
+
+            <div class="field-group">
+              <label class="field-label" for="id_email">Email Address <span class="req">*</span></label>
+              <input type="email" name="email" id="id_email"
+                class="field-control {% if form.email.errors %}is-invalid{% endif %}"
+                placeholder="your@email.com"
+                value="{{ form.email.value|default:'' }}"
+                autocomplete="email" required />
+              {% if form.email.errors %}
+                <div class="field-error"><i class="fas fa-exclamation-circle"></i>{{ form.email.errors.0 }}</div>
+              {% endif %}
+            </div>
+
+            <div class="row g-3">
+              <div class="col-md-6">
+                <div class="field-group">
+                  <label class="field-label" for="id_phone_number">Phone Number</label>
+                  <input type="tel" name="phone_number" id="id_phone_number"
+                    class="field-control"
+                    placeholder="+234 800 000 0000"
+                    value="{{ form.phone_number.value|default:'' }}"
+                    autocomplete="tel" />
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="field-group">
+                  <label class="field-label" for="id_user_type">Account Type <span class="req">*</span></label>
+                  <select name="user_type" id="id_user_type"
+                    class="field-control {% if form.user_type.errors %}is-invalid{% endif %}" required>
+                    <option value="">— Select type —</option>
+                    <option value="public" {% if form.user_type.value == 'public' %}selected{% endif %}>Public User</option>
+                    <option value="hospital" {% if form.user_type.value == 'hospital' %}selected{% endif %}>Hospital / Blood Bank</option>
+                  </select>
+                  {% if form.user_type.errors %}
+                    <div class="field-error"><i class="fas fa-exclamation-circle"></i>{{ form.user_type.errors.0 }}</div>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+
+            <div class="row g-3">
+              <div class="col-md-6">
+                <div class="field-group">
+                  <label class="field-label" for="id_password1">Password <span class="req">*</span></label>
+                  <div style="position:relative;">
+                    <input type="password" name="password1" id="id_password1"
+                      class="field-control {% if form.password1.errors %}is-invalid{% endif %}"
+                      placeholder="Create a strong password"
+                      autocomplete="new-password" required />
+                    <button type="button" class="toggle-pwd" data-target="id_password1">
+                      <i class="fas fa-eye"></i>
+                    </button>
+                  </div>
+                  {% if form.password1.errors %}
+                    <div class="field-error"><i class="fas fa-exclamation-circle"></i>{{ form.password1.errors.0 }}</div>
+                  {% endif %}
+                  <div class="field-hint">At least 8 characters</div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="field-group">
+                  <label class="field-label" for="id_password2">Confirm Password <span class="req">*</span></label>
+                  <div style="position:relative;">
+                    <input type="password" name="password2" id="id_password2"
+                      class="field-control {% if form.password2.errors %}is-invalid{% endif %}"
+                      placeholder="Repeat your password"
+                      autocomplete="new-password" required />
+                    <button type="button" class="toggle-pwd" data-target="id_password2">
+                      <i class="fas fa-eye"></i>
+                    </button>
+                  </div>
+                  {% if form.password2.errors %}
+                    <div class="field-error"><i class="fas fa-exclamation-circle"></i>{{ form.password2.errors.0 }}</div>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+
+            {% if form.non_field_errors %}
+              <div class="alert alert-danger rounded-3 py-2 px-3 mt-2" style="font-size:0.85rem;">
+                {% for error in form.non_field_errors %}
+                  <div><i class="fas fa-exclamation-circle me-1"></i>{{ error }}</div>
+                {% endfor %}
+              </div>
+            {% endif %}
+
+            <button type="submit" class="submit-btn">
+              <i class="fas fa-user-plus"></i> Create My Account
+            </button>
+
+            <p class="terms-text">
+              By creating an account you agree to our
+              <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.
+            </p>
+          </form>
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  document.querySelectorAll('.toggle-pwd').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var input = document.getElementById(btn.dataset.target);
+      var icon  = btn.querySelector('i');
+      if (input.type === 'password') {
+        input.type = 'text';
+        icon.classList.replace('fa-eye', 'fa-eye-slash');
+      } else {
+        input.type = 'password';
+        icon.classList.replace('fa-eye-slash', 'fa-eye');
+      }
+    });
+  });
+</script>
+{% endblock %}

@@ -1,0 +1,751 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}EmergencyRx — Find Blood & Medical Supplies Fast in Nigeria{% endblock %}
+
+{% block navbar_extra_class %}{% endblock %}
+
+{% block extra_css %}
+<style>
+  /* Home page only: swap the brand green for red (nav/buttons/badges on other pages stay green) */
+  :root {
+    --primary: #E63946;
+    --primary-dark: #B22222;
+    --primary-light: #FDEAEA;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!-- ── LIVE TICKER ── -->
+<div class="ticker-bar nav-theme-red" id="mainTicker" style="padding-top: 70px;">
+  <div class="ticker-inner">
+    {% for item in live_ticker %}
+    <span class="ticker-item"><i class="fas fa-circle-dot" style="color:{% if item.kind == 'fulfilled' %}#FFC9C9{% elif item.kind == 'new' %}#ffd080{% else %}#FF8A80{% endif %};"></i> {{ item.label }}: {{ item.text }}</span>
+    {% empty %}
+    <span class="ticker-item"><i class="fas fa-circle-dot" style="color:#FF8A80;"></i> Welcome to EmergencyRx — Nigeria's real-time blood &amp; medical supply network</span>
+    {% endfor %}
+  </div>
+</div>
+
+
+{% if user.is_authenticated %}
+<!-- ── WELCOME BANNER ── -->
+<div class="welcome-banner nav-theme-red" id="welcomeBanner">
+  <div class="container d-flex align-items-center justify-content-between flex-wrap gap-2">
+    <div class="welcome-banner-text">
+      <i class="fa-solid fa-hand-sparkles me-2"></i>
+      Welcome back, <strong>{{ user.first_name|default:user.username }}</strong>!
+      {% if user.user_type == 'hospital' %}Manage your facility and respond to requests below.{% else %}Glad to have you here — need help fast?{% endif %}
+    </div>
+    <div class="welcome-banner-actions">
+      {% if user.user_type == 'hospital' %}
+        <a href="{% url 'facility_dashboard' %}" class="welcome-banner-link">Go to Dashboard <i class="fas fa-arrow-right"></i></a>
+      {% else %}
+        <a href="{% url 'request_create' %}" class="welcome-banner-link">Make a Request <i class="fas fa-arrow-right"></i></a>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endif %}
+
+<!-- ── HERO CAROUSEL ── -->
+<div id="heroCarousel" class="carousel slide hero-carousel" data-bs-ride="carousel" data-bs-interval="6000">
+
+  <div class="carousel-indicators">
+    <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="0" class="active"></button>
+    <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="1"></button>
+    <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="2"></button>
+  </div>
+
+  <div class="carousel-inner">
+
+    <div class="carousel-item active" data-nav-theme="red">
+      <div class="hero-slide slide-1">
+        <div class="container">
+          <div class="row align-items-center">
+            <div class="col-lg-7">
+              <span class="slide-badge"><i class="fas fa-circle-dot me-1" style="color:#FF8A80;"></i>&nbsp;Live Emergency Network</span>
+              <h1>Find <span>Blood.</span><br>Save a Life.</h1>
+              <p>Connect with verified blood banks across Nigeria in seconds. We broadcast your request to every registered facility in your area — instantly.</p>
+              <div class="hero-btns">
+                <a href="{% if user.is_authenticated %}{% url 'request_create' %}{% else %}{% url 'signup' %}{% endif %}" class="btn-rx btn-rx-primary btn-pulse">
+                  <i class="fas fa-tint"></i> Make a Request
+                </a>
+                <a href="#how-it-works" class="btn-rx btn-rx-outline-white">
+                  <i class="fas fa-play-circle"></i> See How It Works
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="carousel-item" data-nav-theme="blue">
+      <div class="hero-slide slide-2">
+        <div class="container">
+          <div class="row align-items-center">
+            <div class="col-lg-7">
+              <span class="slide-badge"><i class="fas fa-stethoscope me-1"></i>&nbsp;Medical Supply Network</span>
+              <h1>Medical Supplies,<br><span>Found Fast.</span></h1>
+              <p>Oxygen tanks, rare medications, medical equipment — search our real-time database of verified hospitals and clinics near you.</p>
+              <div class="hero-btns">
+                <a href="{% url 'facility_search' %}" class="btn-rx btn-rx-primary btn-pulse">
+                  <i class="fas fa-search"></i> Search Supplies
+                </a>
+                <a href="#services" class="btn-rx btn-rx-outline-white">
+                  <i class="fas fa-th-large"></i> Our Services
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="carousel-item" data-nav-theme="green">
+      <div class="hero-slide slide-3">
+        <div class="container">
+          <div class="row align-items-center">
+            <div class="col-lg-7">
+              <span class="slide-badge"><i class="fas fa-id-card me-1"></i>&nbsp;Emergency Preparedness</span>
+              <h1>Be Ready<br>for Any <span>Emergency.</span></h1>
+              <p>Your Emergency Card has your blood type, allergies, and emergency contacts — scannable by any first responder even if you're unconscious.</p>
+              <div class="hero-btns">
+                <a href="{% url 'signup' %}" class="btn-rx btn-rx-primary btn-pulse">
+                  <i class="fas fa-id-card"></i> Get Your Card — ₦1,000
+                </a>
+                <a href="#card-cta" class="btn-rx btn-rx-outline-white">
+                  <i class="fas fa-info-circle"></i> Learn More
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
+    <span class="carousel-control-prev-icon"></span>
+  </button>
+  <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
+    <span class="carousel-control-next-icon"></span>
+  </button>
+
+</div>
+
+
+<!-- ── STATS STRIP ── -->
+<section class="stats-section">
+  <div class="container">
+    <div class="row align-items-center justify-content-center text-center g-4">
+
+      <div class="col-6 col-md-3">
+        <div class="stat-item">
+          <div class="stat-number">
+            <span class="counter" data-target="{{ facility_count|default:0 }}">0</span><span>+</span>
+          </div>
+          <div class="stat-label">Registered Facilities</div>
+        </div>
+      </div>
+
+      <div class="d-none d-md-flex stat-divider"></div>
+
+      <div class="col-6 col-md-3">
+        <div class="stat-item">
+          <div class="stat-number">
+            <span class="counter" data-target="{{ request_count|default:0 }}">0</span><span>+</span>
+          </div>
+          <div class="stat-label">Emergency Requests</div>
+        </div>
+      </div>
+
+      <div class="d-none d-md-flex stat-divider"></div>
+
+      <div class="col-6 col-md-3">
+        <div class="stat-item">
+          <div class="stat-number">
+            <span class="counter" data-target="{{ fulfilled_count|default:0 }}">0</span><span>+</span>
+          </div>
+          <div class="stat-label">Lives Assisted</div>
+        </div>
+      </div>
+
+      <div class="d-none d-md-flex stat-divider"></div>
+
+      <div class="col-6 col-md-3">
+        <div class="stat-item">
+          <div class="stat-number">
+            <span class="counter" data-target="{{ blood_available|default:0 }}">0</span><span>+</span>
+          </div>
+          <div class="stat-label">Blood Types In Stock</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ── HOW IT WORKS ── -->
+<section class="how-section" id="how-it-works">
+  <div class="container">
+    <div class="row justify-content-center text-center mb-5">
+      <div class="col-lg-6" data-aos="fade-up">
+        <span class="section-tag">Simple Process</span>
+        <h2 class="section-title mb-3">How EmergencyRx Works</h2>
+        <p class="section-subtitle">From the moment you need help to the moment you find it — our platform handles everything in between.</p>
+      </div>
+    </div>
+
+    <div class="row align-items-center g-4">
+
+      <div class="col-md-3" data-aos="fade-up" data-aos-delay="0">
+        <div class="step-card">
+          <div class="step-number">1</div>
+          <div class="step-icon"><i class="fas fa-user-plus"></i></div>
+          <h4>Create an Account</h4>
+          <p>Sign up in under 2 minutes — free for the public. Hospitals register with a verified profile.</p>
+        </div>
+      </div>
+
+      <div class="col-md-1 d-none d-md-flex" data-aos="fade-up" data-aos-delay="50">
+        <div class="connector-arrow w-100"><i class="fas fa-chevron-right"></i></div>
+      </div>
+
+      <div class="col-md-3" data-aos="fade-up" data-aos-delay="100">
+        <div class="step-card">
+          <div class="step-number">2</div>
+          <div class="step-icon"><i class="fas fa-satellite-dish"></i></div>
+          <h4>Submit a Request</h4>
+          <p>Tell us what you need — blood type, quantity, and your location. We broadcast it immediately.</p>
+        </div>
+      </div>
+
+      <div class="col-md-1 d-none d-md-flex" data-aos="fade-up" data-aos-delay="150">
+        <div class="connector-arrow w-100"><i class="fas fa-chevron-right"></i></div>
+      </div>
+
+      <div class="col-md-3" data-aos="fade-up" data-aos-delay="200">
+        <div class="step-card">
+          <div class="step-number">3</div>
+          <div class="step-icon"><i class="fas fa-location-crosshairs"></i></div>
+          <h4>Get Matched & Go</h4>
+          <p>A facility confirms availability — you get their exact location, contact, and directions instantly.</p>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="text-center mt-5" data-aos="fade-up" data-aos-delay="300">
+      <a href="{% url 'signup' %}" class="btn-rx btn-rx-primary btn-pulse">
+        <i class="fas fa-arrow-right"></i> Get Started Now — It's Free
+      </a>
+    </div>
+  </div>
+</section>
+
+
+<!-- ── SERVICES ── -->
+<section class="services-section" id="services">
+  <div class="container">
+    <div class="row justify-content-center text-center mb-5">
+      <div class="col-lg-6" data-aos="fade-up">
+        <span class="section-tag">What We Offer</span>
+        <h2 class="section-title mb-3">Our Core Services</h2>
+        <p class="section-subtitle">A complete emergency medical supply platform built for the Nigerian healthcare ecosystem.</p>
+      </div>
+    </div>
+
+    <div class="row g-4">
+
+      <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="0">
+        <div class="service-card">
+          <div class="service-card-img service-img-1"></div>
+          <div class="service-card-body">
+            <span class="service-tag"><i class="fas fa-tint me-1"></i>Blood</span>
+            <h5 class="mt-2">Blood Bank Locator</h5>
+            <p>Find the nearest blood bank with your blood type in stock — updated in real time by registered facilities.</p>
+            <a href="{% url 'facility_search' %}" class="btn-rx btn-rx-outline-primary" style="font-size:0.83rem;padding:0.5rem 1.2rem;">
+              Search Now <i class="fas fa-arrow-right"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="80">
+        <div class="service-card">
+          <div class="service-card-img service-img-2"></div>
+          <div class="service-card-body">
+            <span class="service-tag"><i class="fas fa-pump-medical me-1"></i>Supplies</span>
+            <h5 class="mt-2">Medical Supply Finder</h5>
+            <p>Oxygen cylinders, IV fluids, rare medications, surgical equipment — locate them across verified hospitals near you.</p>
+            <a href="{% url 'facility_search' %}" class="btn-rx btn-rx-outline-primary" style="font-size:0.83rem;padding:0.5rem 1.2rem;">
+              Find Supplies <i class="fas fa-arrow-right"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="160">
+        <div class="service-card">
+          <div class="service-card-img service-img-3"></div>
+          <div class="service-card-body">
+            <span class="service-tag"><i class="fas fa-id-card me-1"></i>Cards</span>
+            <h5 class="mt-2">Emergency Cards</h5>
+            <p>A ₦1,000 PVC card with your blood type, allergies, and emergency contacts. First responders scan the QR code instantly.</p>
+            <a href="{% url 'signup' %}" class="btn-rx btn-rx-outline-primary" style="font-size:0.83rem;padding:0.5rem 1.2rem;">
+              Order Card <i class="fas fa-arrow-right"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="240">
+        <div class="service-card">
+          <div class="service-card-img service-img-4"></div>
+          <div class="service-card-body">
+            <span class="service-tag"><i class="fas fa-hospital me-1"></i>Directory</span>
+            <h5 class="mt-2">Hospital Directory</h5>
+            <p>Browse verified hospitals, blood banks, and clinics across all 36 Nigerian states with real-time stock information.</p>
+            <a href="{% url 'facility_search' %}" class="btn-rx btn-rx-outline-primary" style="font-size:0.83rem;padding:0.5rem 1.2rem;">
+              Browse <i class="fas fa-arrow-right"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ── WHY CHOOSE US ── -->
+<section class="about-section">
+  <div class="container">
+    <div class="row align-items-center g-5">
+
+      <div class="col-lg-5" data-aos="fade-right">
+        <div class="about-img-wrap">
+          <img
+            src="{% static 'images/doctors/about-doctor.jpg' %}"
+            alt="Doctor reviewing emergency request"
+            loading="lazy"
+          />
+          <div class="about-badge">
+            <div class="badge-icon"><i class="fas fa-clock"></i></div>
+            <div class="badge-text">
+              <strong>&lt; 10 Min</strong>
+              <span>Average response time</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-7" data-aos="fade-left">
+        <span class="section-tag">Why Choose Us</span>
+        <h2 class="section-title mb-2">Nigeria's Most Trusted<br>Emergency Supply Network</h2>
+        <p class="section-subtitle mb-4">We built EmergencyRx because people were dying looking for blood 2km away. We turned that into a solved problem.</p>
+
+        <div class="why-item">
+          <div class="why-icon"><i class="fas fa-bolt"></i></div>
+          <div>
+            <h6>Real-Time Broadcasts</h6>
+            <p>Your request is instantly sent to every registered facility within your radius — no manual calls, no wasted time.</p>
+          </div>
+        </div>
+
+        <div class="why-item">
+          <div class="why-icon"><i class="fas fa-shield-halved"></i></div>
+          <div>
+            <h6>Verified Facilities Only</h6>
+            <p>Every hospital and blood bank on our platform is manually verified by our team before going live.</p>
+          </div>
+        </div>
+
+        <div class="why-item">
+          <div class="why-icon"><i class="fas fa-mobile-screen"></i></div>
+          <div>
+            <h6>Works on Any Device</h6>
+            <p>Fully optimized for mobile — because in an emergency, you use whatever is in your hands.</p>
+          </div>
+        </div>
+
+        <div class="why-item">
+          <div class="why-icon"><i class="fas fa-map-location-dot"></i></div>
+          <div>
+            <h6>Nationwide Coverage</h6>
+            <p>Registered facilities across all 36 states and the FCT, with more joining every week.</p>
+          </div>
+        </div>
+
+        <a href="{% url 'signup' %}" class="btn-rx btn-rx-primary mt-2">
+          <i class="fas fa-user-plus"></i> Join the Network
+        </a>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ── FAQ ── -->
+<section class="faq-section" id="faq">
+  <div class="container">
+    <div class="row justify-content-center text-center mb-5">
+      <div class="col-lg-6" data-aos="fade-up">
+        <span class="section-tag">FAQ</span>
+        <h2 class="section-title mb-3">Frequently Asked Questions</h2>
+        <p class="section-subtitle">Everything you need to know about EmergencyRx.</p>
+      </div>
+    </div>
+
+    <div class="row justify-content-center">
+      <div class="col-lg-8" data-aos="fade-up" data-aos-delay="80">
+        <div class="accordion" id="faqAccordion">
+
+          <div class="accordion-item">
+            <h2 class="accordion-header">
+              <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
+                <i class="fas fa-question-circle me-2" style="color:var(--primary);"></i> How does EmergencyRx work?
+              </button>
+            </h2>
+            <div id="faq1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
+              <div class="accordion-body">
+                You submit a request specifying what you need (blood type, quantity, medication name) and your location.
+                Our system instantly broadcasts that request to all registered hospitals and blood banks within your area.
+                When a facility confirms availability, you receive their contact details and directions — in minutes, not hours.
+              </div>
+            </div>
+          </div>
+
+          <div class="accordion-item">
+            <h2 class="accordion-header">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
+                <i class="fas fa-question-circle me-2" style="color:var(--primary);"></i> Is creating an account free?
+              </button>
+            </h2>
+            <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+              <div class="accordion-body">
+                Yes — creating a public account and submitting emergency broadcast requests are both completely free.
+                Hospital registration starts at ₦10,000/month.
+              </div>
+            </div>
+          </div>
+
+          <div class="accordion-item">
+            <h2 class="accordion-header">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
+                <i class="fas fa-question-circle me-2" style="color:var(--primary);"></i> How fast can I expect a response?
+              </button>
+            </h2>
+            <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+              <div class="accordion-body">
+                Our average response time is under 10 minutes during business hours. Facilities on our premium plan are required
+                to respond to broadcasts within 5 minutes or their visibility ranking drops. Critical-urgency requests are
+                highlighted and prioritized in the facility dashboard.
+              </div>
+            </div>
+          </div>
+
+          <div class="accordion-item">
+            <h2 class="accordion-header">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq4">
+                <i class="fas fa-question-circle me-2" style="color:var(--primary);"></i> How do hospitals and blood banks register?
+              </button>
+            </h2>
+            <div id="faq4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+              <div class="accordion-body">
+                Facilities sign up by choosing the <strong>Hospital / Blood Bank Staff</strong> account type. Our team verifies
+                the facility within 24–48 hours before it goes live. After verification, facility admins can update their blood
+                and supply inventory in real time and earn <strong>visibility points</strong> for staying current.
+              </div>
+            </div>
+          </div>
+
+          <div class="accordion-item">
+            <h2 class="accordion-header">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq5">
+                <i class="fas fa-question-circle me-2" style="color:var(--primary);"></i> What is the Emergency Card?
+              </button>
+            </h2>
+            <div id="faq5" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+              <div class="accordion-body">
+                The Emergency Card is a physical PVC card (same size as an ATM card) with your blood type, genotype, allergies,
+                medical conditions, and emergency contacts. It has a unique QR code — when scanned by a first responder, it
+                immediately shows your critical medical information even if you cannot communicate. Cards cost ₦1,000 each.
+              </div>
+            </div>
+          </div>
+
+          <div class="accordion-item">
+            <h2 class="accordion-header">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq6">
+                <i class="fas fa-question-circle me-2" style="color:var(--primary);"></i> Is my personal information safe?
+              </button>
+            </h2>
+            <div id="faq6" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+              <div class="accordion-body">
+                Absolutely. Your personal data is encrypted and never shared with third parties. Only your name and phone
+                number are visible to a facility when they respond to your request. We comply with Nigeria's NDPR
+                (National Data Protection Regulation).
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ── TESTIMONIALS ── -->
+<section class="testimonials-section">
+  <div class="container">
+    <div class="row justify-content-center text-center mb-5">
+      <div class="col-lg-6" data-aos="fade-up">
+        <span class="section-tag" style="background:rgba(255,255,255,0.12);color:rgba(255,255,255,0.85);">Real Stories</span>
+        <h2 class="section-title mb-3" style="color:var(--white);">Lives Changed by EmergencyRx</h2>
+      </div>
+    </div>
+
+    {% if testimonials %}
+    <div id="testimonialCarousel" class="carousel slide testi-carousel" data-bs-ride="carousel" data-bs-interval="5500">
+
+      {% if testimonials|length > 1 %}
+      <div class="carousel-indicators">
+        {% for testimonial in testimonials %}
+        <button type="button" data-bs-target="#testimonialCarousel" data-bs-slide-to="{{ forloop.counter0 }}" {% if forloop.first %}class="active"{% endif %}></button>
+        {% endfor %}
+      </div>
+      {% endif %}
+
+      <div class="carousel-inner">
+        {% for testimonial in testimonials %}
+        <div class="carousel-item{% if forloop.first %} active{% endif %}">
+          <div class="row justify-content-center">
+            <div class="col-lg-7">
+              <div class="testi-card">
+                <div class="testi-stars">
+                  {% for _ in testimonial.stars %}<i class="fas fa-star"></i>{% endfor %}
+                </div>
+                <p class="testi-quote">"{{ testimonial.quote }}"</p>
+                <div class="testi-avatar-fallback"><i class="fas fa-user-circle"></i></div>
+                <div class="testi-name">{{ testimonial.user.get_full_name|default:testimonial.user.username }}</div>
+                {% if testimonial.location %}<div class="testi-role">{{ testimonial.location }}</div>{% endif %}
+              </div>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+
+      {% if testimonials|length > 1 %}
+      <div class="d-flex justify-content-center gap-3 mt-4">
+        <button class="carousel-control-prev position-static" type="button" data-bs-target="#testimonialCarousel" data-bs-slide="prev">
+          <span class="carousel-control-prev-icon"></span>
+        </button>
+        <button class="carousel-control-next position-static" type="button" data-bs-target="#testimonialCarousel" data-bs-slide="next">
+          <span class="carousel-control-next-icon"></span>
+        </button>
+      </div>
+      {% endif %}
+
+    </div>
+    {% else %}
+    <div class="row justify-content-center text-center">
+      <div class="col-lg-6">
+        <p style="color:rgba(255,255,255,0.8);">No stories yet — be the first to share how EmergencyRx helped you.</p>
+      </div>
+    </div>
+    {% endif %}
+
+    <div class="text-center mt-4">
+      <a href="{% url 'submit_testimonial' %}" class="btn-rx btn-rx-outline-white">
+        <i class="fas fa-pen"></i> Share Your Story
+      </a>
+    </div>
+  </div>
+</section>
+
+
+<!-- ── EMERGENCY CARD CTA ── -->
+<section class="card-cta-section" id="card-cta">
+  <div class="container">
+    <div class="row align-items-center g-5">
+
+      <div class="col-lg-6" data-aos="fade-right">
+        <span class="section-tag" style="background:rgba(255,255,255,0.12);color:rgba(255,255,255,0.85);">Physical Card</span>
+        <h2>Your Medical ID —<br>Always on You.</h2>
+        <p class="mb-4">
+          The EmergencyRx Card is a durable PVC card — the same size as your ATM card — that first responders can scan at
+          accident scenes, hospitals, or anywhere you're found. It shows your blood type, allergies, and who to call.
+        </p>
+        <ul class="list-unstyled mb-4" style="color:rgba(255,255,255,0.80);font-size:0.95rem;">
+          <li class="mb-2"><i class="fas fa-check-circle me-2" style="color:var(--accent);"></i>Blood type &amp; genotype</li>
+          <li class="mb-2"><i class="fas fa-check-circle me-2" style="color:var(--accent);"></i>Known allergies &amp; medical conditions</li>
+          <li class="mb-2"><i class="fas fa-check-circle me-2" style="color:var(--accent);"></i>Up to 3 emergency contacts</li>
+          <li class="mb-2"><i class="fas fa-check-circle me-2" style="color:var(--accent);"></i>QR code scannable without internet</li>
+          <li class="mb-2"><i class="fas fa-check-circle me-2" style="color:var(--accent);"></i>Delivered to your door in 5–7 days</li>
+        </ul>
+        <a href="{% url 'signup' %}" class="btn-rx btn-rx-primary btn-pulse">
+          <i class="fas fa-id-card"></i> Order Your Card — ₦1,000
+        </a>
+      </div>
+
+      <div class="col-lg-6 d-flex justify-content-center" data-aos="fade-left">
+        <div class="physical-card float-anim">
+          <div class="card-chip"></div>
+          <div class="mb-3">
+            <div style="font-size:0.7rem;opacity:0.7;letter-spacing:1.5px;text-transform:uppercase;">EmergencyRx Card</div>
+            <div class="card-name">ADEYEMI JOSEPH K.</div>
+          </div>
+          <div>
+            <div style="font-size:0.7rem;opacity:0.7;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:4px;">Blood Type</div>
+            <div class="card-blood">O <sup style="font-size:1.4rem;">—</sup></div>
+          </div>
+          <div style="margin-top:1.5rem;font-size:0.8rem;opacity:0.65;">
+            <i class="fas fa-allergies me-1"></i>Penicillin, Latex &nbsp;|&nbsp; Sickle Cell Trait
+          </div>
+          <div class="card-qr"><i class="fas fa-qrcode"></i></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ── FACILITY REGISTRATION ── -->
+<section class="facility-cta-section">
+  <div class="container">
+    <div class="row justify-content-center text-center mb-5">
+      <div class="col-lg-7" data-aos="fade-up">
+        <span class="section-tag">For Hospitals &amp; Blood Banks</span>
+        <h2 class="section-title mb-3">Register Your Facility</h2>
+        <p class="section-subtitle">Join the fastest-growing emergency medical network in Nigeria. Be the facility that saves lives in your community.</p>
+      </div>
+    </div>
+
+    <div class="row justify-content-center g-4">
+
+      <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="0">
+        <div class="plan-card">
+          <div style="font-size:1.05rem;font-weight:700;color:var(--secondary);margin-bottom:0.5rem;">Basic</div>
+          <div class="plan-price mb-3"><sup>₦</sup>10,000<sub>/month</sub></div>
+          <hr />
+          <div class="plan-feature"><i class="fas fa-check"></i> Listed in hospital directory</div>
+          <div class="plan-feature"><i class="fas fa-check"></i> Real-time stock updates</div>
+          <div class="plan-feature"><i class="fas fa-check"></i> Receive emergency broadcasts</div>
+          <div class="plan-feature"><i class="fas fa-check"></i> Visibility points system</div>
+          <div class="plan-feature" style="color:var(--gray);"><i class="fas fa-times" style="color:#ccc;"></i> Priority broadcast ranking</div>
+          <div class="plan-feature" style="color:var(--gray);"><i class="fas fa-times" style="color:#ccc;"></i> Analytics dashboard</div>
+          <div class="mt-4">
+            <a href="{% url 'signup' %}" class="btn-rx btn-rx-outline-primary w-100 justify-content-center">Get Started</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
+        <div class="plan-card featured" style="position:relative;">
+          <div class="plan-badge">Most Popular</div>
+          <div style="font-size:1.05rem;font-weight:700;color:var(--secondary);margin-bottom:0.5rem;">Premium</div>
+          <div class="plan-price mb-3"><sup>₦</sup>25,000<sub>/month</sub></div>
+          <hr />
+          <div class="plan-feature"><i class="fas fa-check"></i> Everything in Basic</div>
+          <div class="plan-feature"><i class="fas fa-check"></i> Priority broadcast ranking</div>
+          <div class="plan-feature"><i class="fas fa-check"></i> Analytics &amp; response metrics</div>
+          <div class="plan-feature"><i class="fas fa-check"></i> Featured in search results</div>
+          <div class="plan-feature"><i class="fas fa-check"></i> Dedicated support line</div>
+          <div class="plan-feature"><i class="fas fa-check"></i> Monthly performance report</div>
+          <div class="mt-4">
+            <a href="{% url 'signup' %}" class="btn-rx btn-rx-primary w-100 justify-content-center">Register Now</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    {% if recent_facilities %}
+    <div class="text-center mt-5" data-aos="fade-up">
+      <p class="text-muted mb-3" style="font-size:0.88rem;">Already on the platform</p>
+      <div class="d-flex flex-wrap justify-content-center gap-3">
+        {% for facility in recent_facilities %}
+        <span class="badge rounded-pill px-3 py-2" style="background:var(--light);color:var(--secondary);font-size:0.85rem;font-weight:600;border:1px solid var(--border);">
+          <i class="fas fa-hospital me-1" style="color:var(--primary);"></i>{{ facility.name }}
+        </span>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+
+  </div>
+</section>
+
+{% endblock %}
+
+
+{% block extra_js %}
+<script>
+  function animateCounter(el) {
+    var target = parseInt(el.dataset.target, 10);
+    if (!target) return;
+    var duration = 1800;
+    var step = Math.ceil(target / (duration / 16));
+    var current = 0;
+    var timer = setInterval(function () {
+      current += step;
+      if (current >= target) { current = target; clearInterval(timer); }
+      el.textContent = current.toLocaleString();
+    }, 16);
+  }
+
+  var counterObserver = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (entry.isIntersecting) {
+        animateCounter(entry.target);
+        counterObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.5 });
+
+  document.querySelectorAll('.counter').forEach(function (el) {
+    counterObserver.observe(el);
+  });
+
+  // Sync navbar + ticker background with the active hero-carousel slide
+  (function () {
+    var heroCarousel = document.getElementById('heroCarousel');
+    var nav = document.getElementById('mainNav');
+    var ticker = document.getElementById('mainTicker');
+    var welcomeBanner = document.getElementById('welcomeBanner');
+    if (!heroCarousel || !nav) return;
+
+    function applyNavTheme(slideEl) {
+      if (!slideEl) return;
+      var theme = slideEl.dataset.navTheme || 'red';
+      nav.classList.remove('nav-theme-red', 'nav-theme-blue', 'nav-theme-green');
+      nav.classList.add('nav-theme-' + theme);
+      if (ticker) {
+        ticker.classList.remove('nav-theme-red', 'nav-theme-blue', 'nav-theme-green');
+        ticker.classList.add('nav-theme-' + theme);
+      }
+      if (welcomeBanner) {
+        welcomeBanner.classList.remove('nav-theme-red', 'nav-theme-blue', 'nav-theme-green');
+        welcomeBanner.classList.add('nav-theme-' + theme);
+      }
+    }
+
+    applyNavTheme(heroCarousel.querySelector('.carousel-item.active'));
+
+    heroCarousel.addEventListener('slide.bs.carousel', function (e) {
+      applyNavTheme(e.relatedTarget);
+    });
+  })();
+</script>
+{% endblock %}

@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+
+{% block title %}Facility Profile — EmergencyRx{% endblock %}
+
+{% block content %}
+<section class="auth-page" style="min-height:auto;padding:8rem 0 4rem;">
+  <div class="container" style="max-width:640px;">
+    <span class="section-tag">{{ facility.name }}</span>
+    <h3 class="mb-1">Facility Profile</h3>
+    <p class="auth-sub">
+      Status:
+      {% if facility.is_verified %}
+        <span style="color:var(--primary);font-weight:600;"><i class="fas fa-badge-check"></i> Verified</span>
+      {% else %}
+        <span style="color:#a67c00;font-weight:600;"><i class="fas fa-clock"></i> Pending Verification</span>
+      {% endif %}
+      &nbsp;·&nbsp; {{ facility.visibility_points }} visibility points
+    </p>
+
+    <form method="post" novalidate>
+      {% csrf_token %}
+
+      <div class="field-group">
+        <label class="field-label">Facility Name <span class="req">*</span></label>
+        <input type="text" name="name" class="field-control" value="{{ form.name.value|default:'' }}" required />
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Facility Type <span class="req">*</span></label>
+        <select name="facility_type" class="field-control" required>
+          {% for code, label in form.fields.facility_type.choices %}
+          <option value="{{ code }}" {% if form.facility_type.value == code %}selected{% endif %}>{{ label }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Address <span class="req">*</span></label>
+        <textarea name="address" rows="2" class="field-control" required>{{ form.address.value|default:'' }}</textarea>
+      </div>
+
+      <div class="row g-3">
+        <div class="col-md-6">
+          <div class="field-group">
+            <label class="field-label">State <span class="req">*</span></label>
+            <select name="state" class="field-control" required>
+              {% for code, label in form.fields.state.choices %}
+              <option value="{{ code }}" {% if form.state.value == code %}selected{% endif %}>{{ label }}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="field-group">
+            <label class="field-label">LGA <span class="req">*</span></label>
+            <input type="text" name="lga" class="field-control" value="{{ form.lga.value|default:'' }}" required />
+          </div>
+        </div>
+      </div>
+
+      <div class="row g-3">
+        <div class="col-md-6">
+          <div class="field-group">
+            <label class="field-label">Phone <span class="req">*</span></label>
+            <input type="tel" name="phone" class="field-control" value="{{ form.phone.value|default:'' }}" required />
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="field-group">
+            <label class="field-label">Email</label>
+            <input type="email" name="email" class="field-control" value="{{ form.email.value|default:'' }}" />
+          </div>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Website</label>
+        <input type="url" name="website" class="field-control" value="{{ form.website.value|default:'' }}" />
+      </div>
+
+      <button type="submit" class="submit-btn">
+        <i class="fas fa-save"></i> Save Changes
+      </button>
+    </form>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+
+{% block title %}Register Your Facility — EmergencyRx{% endblock %}
+
+{% block content %}
+<section class="auth-page" style="min-height:auto;padding:8rem 0 4rem;">
+  <div class="container" style="max-width:640px;">
+    <span class="section-tag">For Hospitals &amp; Blood Banks</span>
+    <h3 class="mb-1">Register Your Facility</h3>
+    <p class="auth-sub">Our team verifies new facilities within 24–48 hours before you go live.</p>
+
+    <form method="post" novalidate>
+      {% csrf_token %}
+
+      <div class="field-group">
+        <label class="field-label">Facility Name <span class="req">*</span></label>
+        <input type="text" name="name" class="field-control {% if form.name.errors %}is-invalid{% endif %}"
+               value="{{ form.name.value|default:'' }}" placeholder="e.g. St. Nicholas Hospital" required />
+        {% if form.name.errors %}<div class="field-error"><i class="fas fa-exclamation-circle"></i>{{ form.name.errors.0 }}</div>{% endif %}
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Facility Type <span class="req">*</span></label>
+        <select name="facility_type" class="field-control" required>
+          {% for code, label in form.fields.facility_type.choices %}
+          <option value="{{ code }}" {% if form.facility_type.value == code %}selected{% endif %}>{{ label }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Address <span class="req">*</span></label>
+        <textarea name="address" rows="2" class="field-control {% if form.address.errors %}is-invalid{% endif %}" required>{{ form.address.value|default:'' }}</textarea>
+        {% if form.address.errors %}<div class="field-error"><i class="fas fa-exclamation-circle"></i>{{ form.address.errors.0 }}</div>{% endif %}
+      </div>
+
+      <div class="row g-3">
+        <div class="col-md-6">
+          <div class="field-group">
+            <label class="field-label">State <span class="req">*</span></label>
+            <select name="state" class="field-control {% if form.state.errors %}is-invalid{% endif %}" required>
+              <option value="">— Select —</option>
+              {% for code, label in form.fields.state.choices %}
+              <option value="{{ code }}" {% if form.state.value == code %}selected{% endif %}>{{ label }}</option>
+              {% endfor %}
+            </select>
+            {% if form.state.errors %}<div class="field-error"><i class="fas fa-exclamation-circle"></i>{{ form.state.errors.0 }}</div>{% endif %}
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="field-group">
+            <label class="field-label">LGA <span class="req">*</span></label>
+            <input type="text" name="lga" class="field-control {% if form.lga.errors %}is-invalid{% endif %}"
+                   value="{{ form.lga.value|default:'' }}" placeholder="e.g. Surulere" required />
+            {% if form.lga.errors %}<div class="field-error"><i class="fas fa-exclamation-circle"></i>{{ form.lga.errors.0 }}</div>{% endif %}
+          </div>
+        </div>
+      </div>
+
+      <div class="row g-3">
+        <div class="col-md-6">
+          <div class="field-group">
+            <label class="field-label">Phone <span class="req">*</span></label>
+            <input type="tel" name="phone" class="field-control {% if form.phone.errors %}is-invalid{% endif %}"
+                   value="{{ form.phone.value|default:'' }}" placeholder="+234 800 000 0000" required />
+            {% if form.phone.errors %}<div class="field-error"><i class="fas fa-exclamation-circle"></i>{{ form.phone.errors.0 }}</div>{% endif %}
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="field-group">
+            <label class="field-label">Email</label>
+            <input type="email" name="email" class="field-control" value="{{ form.email.value|default:'' }}" placeholder="facility@example.com" />
+          </div>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Website</label>
+        <input type="url" name="website" class="field-control" value="{{ form.website.value|default:'' }}" placeholder="https://" />
+      </div>
+
+      <button type="submit" class="submit-btn">
+        <i class="fas fa-hospital"></i> Submit for Verification
+      </button>
+    </form>
+  </div>
+</section>
+{% endblock %}

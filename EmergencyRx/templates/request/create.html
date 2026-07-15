@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+
+{% block title %}Submit an Emergency Request — EmergencyRx{% endblock %}
+
+{% block content %}
+<section class="auth-page" style="min-height:auto;padding:8rem 0 4rem;">
+  <div class="container" style="max-width:640px;">
+    <span class="section-tag">Emergency Request</span>
+    <h3 class="mb-1">What do you need?</h3>
+    <p class="auth-sub">We'll broadcast this to every verified facility that matches, instantly.</p>
+
+    <form method="post" novalidate>
+      {% csrf_token %}
+
+      <div class="row g-3">
+        <div class="col-md-6">
+          <div class="field-group">
+            <label class="field-label">Request Type <span class="req">*</span></label>
+            <select name="request_type" class="field-control {% if form.request_type.errors %}is-invalid{% endif %}" required>
+              <option value="">— Select —</option>
+              {% for code, label in form.fields.request_type.choices %}
+                {% if code %}<option value="{{ code }}" {% if form.request_type.value == code %}selected{% endif %}>{{ label }}</option>{% endif %}
+              {% endfor %}
+            </select>
+            {% if form.request_type.errors %}<div class="field-error"><i class="fas fa-exclamation-circle"></i>{{ form.request_type.errors.0 }}</div>{% endif %}
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="field-group">
+            <label class="field-label">Urgency <span class="req">*</span></label>
+            <select name="urgency" class="field-control" required>
+              {% for code, label in form.fields.urgency.choices %}
+                <option value="{{ code }}" {% if form.urgency.value == code %}selected{% endif %}>{{ label }}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="row g-3">
+        <div class="col-md-6">
+          <div class="field-group">
+            <label class="field-label">Blood Type <span style="font-weight:400;color:var(--gray);">(if blood request)</span></label>
+            <select name="blood_type" class="field-control {% if form.blood_type.errors %}is-invalid{% endif %}">
+              <option value="">— N/A —</option>
+              {% for code, label in form.fields.blood_type.choices %}
+                {% if code %}<option value="{{ code }}" {% if form.blood_type.value == code %}selected{% endif %}>{{ label }}</option>{% endif %}
+              {% endfor %}
+            </select>
+            {% if form.blood_type.errors %}<div class="field-error"><i class="fas fa-exclamation-circle"></i>{{ form.blood_type.errors.0 }}</div>{% endif %}
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="field-group">
+            <label class="field-label">Units Needed <span class="req">*</span></label>
+            <input type="number" name="units_needed" min="1" class="field-control" value="{{ form.units_needed.value|default:1 }}" required />
+          </div>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Supply / Medication Name <span style="font-weight:400;color:var(--gray);">(if not blood)</span></label>
+        <input type="text" name="supply_name" class="field-control {% if form.supply_name.errors %}is-invalid{% endif %}"
+               placeholder="e.g. Oxygen cylinder, Anti-venom, Factor VIII" value="{{ form.supply_name.value|default:'' }}" />
+        {% if form.supply_name.errors %}<div class="field-error"><i class="fas fa-exclamation-circle"></i>{{ form.supply_name.errors.0 }}</div>{% endif %}
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Additional Details</label>
+        <textarea name="description" rows="3" class="field-control" placeholder="Anything a facility should know">{{ form.description.value|default:'' }}</textarea>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Your Location <span class="req">*</span></label>
+        <input type="text" name="location_text" class="field-control {% if form.location_text.errors %}is-invalid{% endif %}"
+               placeholder="e.g. Surulere, Lagos" value="{{ form.location_text.value|default:'' }}" required />
+        {% if form.location_text.errors %}<div class="field-error"><i class="fas fa-exclamation-circle"></i>{{ form.location_text.errors.0 }}</div>{% endif %}
+      </div>
+
+      <div class="row g-3">
+        <div class="col-md-6">
+          <div class="field-group">
+            <label class="field-label">State <span class="req">*</span></label>
+            <input type="text" name="state" class="field-control {% if form.state.errors %}is-invalid{% endif %}"
+                   placeholder="e.g. Lagos" value="{{ form.state.value|default:'' }}" required />
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="field-group">
+            <label class="field-label">LGA <span class="req">*</span></label>
+            <input type="text" name="lga" class="field-control {% if form.lga.errors %}is-invalid{% endif %}"
+                   placeholder="e.g. Surulere" value="{{ form.lga.value|default:'' }}" required />
+          </div>
+        </div>
+      </div>
+
+      {% if form.non_field_errors %}
+        <div class="alert alert-danger rounded-3 py-2 px-3 mt-2" style="font-size:0.85rem;">
+          {% for error in form.non_field_errors %}<div><i class="fas fa-exclamation-circle me-1"></i>{{ error }}</div>{% endfor %}
+        </div>
+      {% endif %}
+
+      <button type="submit" class="submit-btn">
+        <i class="fas fa-satellite-dish"></i> Broadcast My Request
+      </button>
+    </form>
+  </div>
+</section>
+{% endblock %}

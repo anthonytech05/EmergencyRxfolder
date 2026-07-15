@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard — {{ facility.name }}{% endblock %}
+
+{% block content %}
+<section class="how-section" style="padding-top:8rem;">
+  <div class="container">
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
+      <div>
+        <span class="section-tag">{{ facility.get_facility_type_display }}</span>
+        <h2 class="section-title mb-0">{{ facility.name }}</h2>
+      </div>
+      <div class="d-flex gap-2">
+        <a href="{% url 'inventory_home' %}" class="btn-rx btn-rx-outline-primary"><i class="fas fa-boxes-stacked"></i> Manage Inventory</a>
+        <a href="{% url 'facility_profile' %}" class="btn-rx btn-rx-outline-primary"><i class="fas fa-gear"></i> Edit Profile</a>
+        <a href="{% url 'facility_requests' %}" class="btn-rx btn-rx-outline-primary"><i class="fas fa-list-check"></i> View All Requests</a>
+      </div>
+    </div>
+
+    <div class="row g-4 mb-5">
+      <div class="col-6 col-md-3">
+        <div class="step-card text-center">
+          <div class="stat-number" style="color:var(--secondary);font-size:2rem;">{{ facility.visibility_points }}</div>
+          <div class="stat-label" style="color:var(--gray);">Visibility Points</div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="step-card text-center">
+          <div class="stat-number" style="color:var(--secondary);font-size:2rem;">{{ response_rate }}%</div>
+          <div class="stat-label" style="color:var(--gray);">Response Rate</div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="step-card text-center">
+          <div class="stat-number" style="color:var(--secondary);font-size:2rem;">{{ pending_count }}</div>
+          <div class="stat-label" style="color:var(--gray);">Pending Requests</div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="step-card text-center">
+          <div class="stat-number" style="color:var(--secondary);font-size:2rem;">
+            {% if facility.is_verified %}<i class="fas fa-circle-check" style="color:var(--primary);"></i>{% else %}<i class="fas fa-clock" style="color:#a67c00;"></i>{% endif %}
+          </div>
+          <div class="stat-label" style="color:var(--gray);">{% if facility.is_verified %}Verified{% else %}Pending Review{% endif %}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row g-4">
+      <div class="col-lg-6">
+        <h5 class="mb-3">Blood Stock</h5>
+        {% for stock in blood_stocks %}
+        <div class="d-flex justify-content-between align-items-center py-2" style="border-bottom:1px solid var(--border);">
+          <strong>{{ stock.get_blood_type_display }}</strong>
+          <span class="badge rounded-pill px-3 py-2" style="background:{% if stock.units_available > 0 %}var(--primary-light);color:var(--primary-dark);{% else %}#f1f1f1;color:var(--gray);{% endif %}">
+            {{ stock.units_available }} unit(s)
+          </span>
+        </div>
+        {% empty %}
+        <p class="section-subtitle">No blood stock recorded yet.</p>
+        {% endfor %}
+        <a href="{% url 'inventory_home' %}" class="btn-rx btn-rx-outline-primary mt-3" style="font-size:0.85rem;">Update Stock</a>
+      </div>
+
+      <div class="col-lg-6">
+        <h5 class="mb-3">Recent Broadcasts</h5>
+        {% for broadcast in broadcasts %}
+        <div class="d-flex justify-content-between align-items-center py-2" style="border-bottom:1px solid var(--border);">
+          <div>
+            <strong>{{ broadcast.request.units_needed }} unit(s) — {{ broadcast.request.blood_type|default:broadcast.request.supply_name }}</strong>
+            <div style="font-size:0.8rem;color:var(--gray);">{{ broadcast.sent_at|date:"M d, H:i" }}</div>
+          </div>
+          <span class="badge rounded-pill px-3 py-2" style="background:{% if broadcast.response == 'available' %}var(--primary-light);color:var(--primary-dark);{% elif broadcast.response == 'unavailable' %}#f1f1f1;color:var(--gray);{% else %}#fff7e6;color:#a67c00;{% endif %}">
+            {{ broadcast.get_response_display }}
+          </span>
+        </div>
+        {% empty %}
+        <p class="section-subtitle">No incoming requests yet.</p>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
