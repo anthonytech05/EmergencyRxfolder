@@ -16,7 +16,3 @@ psycopg2-binary==2.9.12
 dj-database-url==3.1.2
 gunicorn==26.0.0
 uvicorn==0.51.0
-
-
-# Needed once you connect Django to PostgreSQL (see settings.py DATABASES)
-psycopg2-binary==2.9.10
