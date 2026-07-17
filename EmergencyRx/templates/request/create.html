@@ -81,15 +81,22 @@
         <div class="col-md-6">
           <div class="field-group">
             <label class="field-label">State <span class="req">*</span></label>
-            <input type="text" name="state" class="field-control {% if form.state.errors %}is-invalid{% endif %}"
-                   placeholder="e.g. Lagos" value="{{ form.state.value|default:'' }}" required />
+            <select name="state" id="id_state" class="field-control {% if form.state.errors %}is-invalid{% endif %}" required>
+              <option value="">— Select State —</option>
+              {% for code, label in form.fields.state.choices %}
+              <option value="{{ code }}" {% if form.state.value == code %}selected{% endif %}>{{ label }}</option>
+              {% endfor %}
+            </select>
+            {% if form.state.errors %}<div class="field-error"><i class="fas fa-exclamation-circle"></i>{{ form.state.errors.0 }}</div>{% endif %}
           </div>
         </div>
         <div class="col-md-6">
           <div class="field-group">
             <label class="field-label">LGA <span class="req">*</span></label>
-            <input type="text" name="lga" class="field-control {% if form.lga.errors %}is-invalid{% endif %}"
-                   placeholder="e.g. Surulere" value="{{ form.lga.value|default:'' }}" required />
+            <select name="lga" id="id_lga" class="field-control {% if form.lga.errors %}is-invalid{% endif %}" required>
+              <option value="">— Select State First —</option>
+            </select>
+            {% if form.lga.errors %}<div class="field-error"><i class="fas fa-exclamation-circle"></i>{{ form.lga.errors.0 }}</div>{% endif %}
           </div>
         </div>
       </div>
@@ -106,4 +113,38 @@
     </form>
   </div>
 </section>
+{% endblock %}
+
+{% block extra_js %}
+{{ states_lgas|json_script:"states-lgas-data" }}
+<script>
+(function () {
+  var statesLgas = JSON.parse(document.getElementById('states-lgas-data').textContent);
+  var stateSelect = document.getElementById('id_state');
+  var lgaSelect = document.getElementById('id_lga');
+  var initialLga = '{{ form.lga.value|default:""|escapejs }}';
+
+  function populateLgas(stateName, selectedLga) {
+    var lgas = statesLgas[stateName] || [];
+    lgaSelect.innerHTML = lgas.length
+      ? '<option value="">— Select LGA —</option>'
+      : '<option value="">— Select State First —</option>';
+    lgas.forEach(function (lga) {
+      var option = document.createElement('option');
+      option.value = lga;
+      option.textContent = lga;
+      if (lga === selectedLga) {
+        option.selected = true;
+      }
+      lgaSelect.appendChild(option);
+    });
+  }
+
+  stateSelect.addEventListener('change', function () {
+    populateLgas(this.value, '');
+  });
+
+  populateLgas(stateSelect.value, initialLga);
+})();
+</script>
 {% endblock %}

@@ -59,16 +59,16 @@ body {
 .navbar-brand .brand-rx { color: var(--primary); }
 
 .nav-link-item {
-  color: rgba(255,255,255,0.88) !important;
+  color: var(--white) !important;
   font-weight: 500;
   font-size: 0.93rem;
   padding: 0.45rem 0.9rem !important;
   border-radius: 6px;
   transition: color 0.2s, background 0.2s;
 }
-.nav-link-item:hover { color: var(--white) !important; background: rgba(255,255,255,0.12); }
+.nav-link-item:hover { color: var(--primary) !important; background: rgba(255,255,255,0.15); }
 #mainNav.scrolled .nav-link-item,
-#mainNav.navbar-solid .nav-link-item { color: #000000 !important; }
+#mainNav.navbar-solid .nav-link-item { color: var(--secondary) !important; }
 #mainNav.scrolled .nav-link-item:hover,
 #mainNav.navbar-solid .nav-link-item:hover { color: var(--primary) !important; background: var(--primary-light); }
 
@@ -897,3 +897,148 @@ footer a:hover { color: var(--accent); padding-left: 4px; }
 .terms-text a { color: var(--primary); text-decoration: none; font-weight: 600; }
 .forgot-link { font-size: 0.82rem; color: var(--primary); text-decoration: none; font-weight: 600; }
 .forgot-link:hover { text-decoration: underline; }
+
+/* ============================================================
+   RESPONSIVE — MOBILE / TABLET
+   ============================================================ */
+
+/* ── NAVBAR (collapses below 992px) ── */
+@media (max-width: 991.98px) {
+  #mainNav .navbar-collapse {
+    background: var(--white);
+    border-radius: var(--radius);
+    margin-top: 0.75rem;
+    padding: 1rem 1.2rem 1.3rem;
+    box-shadow: var(--shadow-lg);
+  }
+  #mainNav .navbar-nav { margin: 0 0 0.5rem; }
+  .nav-link-item,
+  #mainNav.scrolled .nav-link-item,
+  #mainNav.navbar-solid .nav-link-item { color: var(--secondary) !important; padding: 0.6rem 0.9rem !important; }
+  .nav-link-item:hover { color: var(--primary) !important; background: var(--primary-light); }
+  .nav-greeting,
+  .nav-bell { color: var(--secondary) !important; }
+  .navbar-toggler-icon { filter: none; }
+  #mainNav .d-flex.align-items-center.gap-2 { flex-wrap: wrap; }
+
+  /* Login button sits on the same solid-white collapse panel as Sign Up —
+     give it the same visible contrast instead of the desktop transparent-navbar styling */
+  .btn-nav-login {
+    border-color: var(--primary);
+    color: var(--primary) !important;
+  }
+  .btn-nav-login:hover { background: var(--primary-light); }
+}
+
+/* ── GENERAL / TYPOGRAPHY ── */
+@media (max-width: 767.98px) {
+  .section-title { font-size: 1.7rem; }
+  .section-subtitle { font-size: 0.95rem; }
+  .toast-stack { top: 76px; left: 12px; right: 12px; min-width: 0; max-width: none; }
+}
+
+@media (max-width: 575.98px) {
+  .section-title { font-size: 1.45rem; }
+}
+
+/* ── LIVE TICKER ── */
+@media (max-width: 575.98px) {
+  .ticker-bar { font-size: 0.72rem; padding: 6px 0; }
+  .ticker-item { padding: 0 1.5rem; }
+}
+
+/* ── HERO CAROUSEL ── */
+@media (max-width: 991.98px) {
+  .hero-carousel .carousel-inner,
+  .hero-carousel .carousel-item,
+  .hero-slide { min-height: 90vh; }
+  .hero-slide { text-align: center; }
+  .hero-slide .hero-btns { justify-content: center; }
+}
+@media (max-width: 575.98px) {
+  .hero-carousel .carousel-inner,
+  .hero-carousel .carousel-item,
+  .hero-slide { min-height: 78vh; }
+  .hero-slide { padding: 2.5rem 0; }
+  .slide-badge { font-size: 0.68rem; padding: 0.35rem 0.8rem; }
+  .hero-slide .hero-btns { flex-direction: column; width: 100%; }
+  .hero-slide .hero-btns .btn-rx { width: 100%; justify-content: center; }
+  .carousel-control-prev,
+  .carousel-control-next { width: 40px; height: 40px; margin: 0 0.6rem; }
+}
+
+/* ── STATS STRIP ── */
+@media (max-width: 575.98px) {
+  .stat-number { font-size: 1.9rem; }
+  .stat-label { font-size: 0.76rem; }
+}
+
+/* ── HOW IT WORKS / SERVICES / ABOUT ── */
+@media (max-width: 767.98px) {
+  .how-section,
+  .services-section,
+  .about-section,
+  .faq-section,
+  .testimonials-section,
+  .card-cta-section,
+  .facility-cta-section { padding: 3.5rem 0; }
+  .step-card { padding: 2rem 1.4rem; margin-bottom: 1.5rem; }
+  .service-card-img { height: 170px; }
+  .about-img-wrap img { height: 320px; }
+  .about-badge { left: 16px; bottom: 16px; padding: 0.75rem 1rem; gap: 8px; }
+  .about-badge .badge-icon { width: 40px; height: 40px; font-size: 1.1rem; }
+  .about-badge .badge-text strong { font-size: 1.05rem; }
+}
+
+/* ── EMERGENCY CARD CTA ── */
+@media (max-width: 991.98px) {
+  .card-cta-section h2 { font-size: 1.8rem; }
+  .card-cta-section .col-lg-6.d-flex { margin-top: 2.5rem; }
+  .physical-card { max-width: 100%; }
+}
+
+/* ── FACILITY PLANS ── */
+@media (max-width: 991.98px) {
+  .plan-card.featured { transform: none; }
+}
+
+/* ── FOOTER ── */
+@media (max-width: 767.98px) {
+  footer { padding: 3.5rem 0 1.5rem; text-align: center; }
+  .footer-logo { justify-content: center; }
+  .social-links { display: flex; justify-content: center; }
+  footer h5::after { left: 50%; transform: translateX(-50%); }
+  footer a { padding-left: 0 !important; }
+  footer a:hover { padding-left: 0; }
+}
+@media (max-width: 575.98px) {
+  .footer-divider { margin: 2rem 0 1.2rem; }
+}
+
+/* ============================================================
+   AUTH PAGES — MOBILE
+   ============================================================ */
+@media (max-width: 991.98px) {
+  .auth-page { min-height: auto; }
+  .auth-right { min-height: 100vh; padding: 3rem 1.5rem; }
+}
+@media (max-width: 575.98px) {
+  .auth-right { padding: 2.2rem 1.1rem; }
+  .auth-right h3 { font-size: 1.5rem; }
+  .submit-btn { font-size: 0.93rem; }
+}
+
+/* ============================================================
+   DASHBOARD / FACILITY PAGES — MOBILE
+   ============================================================ */
+@media (max-width: 575.98px) {
+  section[style*="padding-top:8rem"] { padding-top: 6rem !important; }
+}
+
+/* ── INVENTORY ROWS ── */
+@media (max-width: 575.98px) {
+  .inventory-row { background: var(--light); border-radius: 10px; padding: 0.8rem; }
+  .inventory-row input.field-control,
+  .inventory-row select.field-control { flex: 1 1 100%; width: 100%; }
+  .inventory-row button.btn-rx { flex: 1 1 100%; justify-content: center; }
+}

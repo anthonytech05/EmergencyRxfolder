@@ -1,9 +1,13 @@
 from django import forms
 
+from facilities.nigeria_data import NIGERIA_STATES
+
 from .models import EmergencyRequest
 
 
 class EmergencyRequestForm(forms.ModelForm):
+    state = forms.ChoiceField(choices=[(s, s) for s in NIGERIA_STATES])
+
     class Meta:
         model = EmergencyRequest
         fields = (

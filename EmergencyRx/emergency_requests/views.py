@@ -2,6 +2,8 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
 
+from facilities.nigeria_data import NIGERIA_STATES_LGAS
+
 from .forms import EmergencyRequestForm
 from .models import EmergencyRequest
 from .services import broadcast_request
@@ -33,7 +35,7 @@ def request_create(request):
             return redirect('request_status', pk=emergency_request.pk)
     else:
         form = EmergencyRequestForm()
-    return render(request, 'request/create.html', {'form': form})
+    return render(request, 'request/create.html', {'form': form, 'states_lgas': NIGERIA_STATES_LGAS})
 
 
 @login_required

@@ -13,12 +13,15 @@
       </div>
     </div>
 
-    <form method="get" class="d-flex justify-content-center gap-2 mb-4">
-      <select name="state" class="field-control" style="max-width:260px;">
+    <form method="get" class="d-flex justify-content-center gap-2 mb-4 flex-wrap">
+      <select name="state" id="id_state" class="field-control" style="max-width:260px;flex:1 1 200px;">
         <option value="">All States</option>
         {% for s in states %}
         <option value="{{ s }}" {% if s == selected_state %}selected{% endif %}>{{ s }}</option>
         {% endfor %}
+      </select>
+      <select name="lga" id="id_lga" class="field-control" style="max-width:260px;flex:1 1 200px;">
+        <option value="">All LGAs</option>
       </select>
       <button type="submit" class="btn-rx btn-rx-primary"><i class="fas fa-filter"></i> Filter</button>
     </form>
@@ -44,4 +47,36 @@
     {% endfor %}
   </div>
 </section>
+{% endblock %}
+
+{% block extra_js %}
+{{ states_lgas|json_script:"states-lgas-data" }}
+<script>
+(function () {
+  var statesLgas = JSON.parse(document.getElementById('states-lgas-data').textContent);
+  var stateSelect = document.getElementById('id_state');
+  var lgaSelect = document.getElementById('id_lga');
+  var initialLga = '{{ selected_lga|default:""|escapejs }}';
+
+  function populateLgas(stateName, selectedLga) {
+    lgaSelect.innerHTML = '<option value="">All LGAs</option>';
+    var lgas = statesLgas[stateName] || [];
+    lgas.forEach(function (lga) {
+      var option = document.createElement('option');
+      option.value = lga;
+      option.textContent = lga;
+      if (lga === selectedLga) {
+        option.selected = true;
+      }
+      lgaSelect.appendChild(option);
+    });
+  }
+
+  stateSelect.addEventListener('change', function () {
+    populateLgas(this.value, '');
+  });
+
+  populateLgas(stateSelect.value, initialLga);
+})();
+</script>
 {% endblock %}

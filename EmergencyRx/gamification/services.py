@@ -26,8 +26,10 @@ def award_points(facility: Facility, points: int, stock_type: str, updated_by=No
         facility.save(update_fields=['visibility_points'])
 
 
-def get_leaderboard(state: str = None, limit: int = 20):
+def get_leaderboard(state: str = None, lga: str = None, limit: int = 20):
     queryset = Facility.objects.filter(is_verified=True, is_active=True)
     if state:
         queryset = queryset.filter(state__iexact=state)
+    if lga:
+        queryset = queryset.filter(lga__iexact=lga)
     return queryset.order_by('-visibility_points', 'name')[:limit]

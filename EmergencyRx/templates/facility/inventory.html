@@ -12,7 +12,7 @@
       <div class="col-lg-6">
         <h5 class="mb-3">Blood Stock</h5>
         {% for stock in blood_stocks %}
-        <form method="post" action="{% url 'blood_stock_save' %}" class="d-flex align-items-center gap-2 mb-2">
+        <form method="post" action="{% url 'blood_stock_save' %}" class="d-flex align-items-center gap-2 mb-2 flex-wrap inventory-row">
           {% csrf_token %}
           <input type="hidden" name="stock_id" value="{{ stock.id }}" />
           <input type="hidden" name="blood_type" value="{{ stock.blood_type }}" />
@@ -46,13 +46,13 @@
       <div class="col-lg-6">
         <h5 class="mb-3">Medical Supplies</h5>
         {% for supply in medical_supplies %}
-        <form method="post" action="{% url 'medical_supply_save' %}" class="d-flex align-items-center gap-2 mb-2">
+        <form method="post" action="{% url 'medical_supply_save' %}" class="d-flex align-items-center gap-2 mb-2 flex-wrap inventory-row">
           {% csrf_token %}
           <input type="hidden" name="supply_id" value="{{ supply.id }}" />
           <input type="hidden" name="supply_name" value="{{ supply.supply_name }}" />
           <input type="hidden" name="category" value="{{ supply.category }}" />
           <input type="hidden" name="unit_of_measure" value="{{ supply.unit_of_measure }}" />
-          <span style="flex:1;font-weight:600;font-size:0.88rem;">{{ supply.supply_name }}</span>
+          <span style="flex:1 1 140px;font-weight:600;font-size:0.88rem;">{{ supply.supply_name }}</span>
           <input type="number" name="quantity" min="0" value="{{ supply.quantity }}" class="field-control" style="padding:0.5rem;width:90px;" />
           <label class="d-flex align-items-center gap-1" style="font-size:0.8rem;">
             <input type="checkbox" name="is_available" {% if supply.is_available %}checked{% endif %} /> Available

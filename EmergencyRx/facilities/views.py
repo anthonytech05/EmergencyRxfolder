@@ -10,6 +10,7 @@ from inventory.models import BloodStock
 from .decorators import facility_required
 from .forms import FacilityForm
 from .models import Facility
+from .nigeria_data import NIGERIA_STATES, NIGERIA_STATES_LGAS
 
 BLOOD_TYPES = BloodStock.BLOOD_TYPES
 
@@ -101,7 +102,7 @@ def facility_search(request):
     if state:
         results = results.filter(state__iexact=state)
     if lga:
-        results = results.filter(lga__icontains=lga)
+        results = results.filter(lga__iexact=lga)
     if facility_type:
         results = results.filter(facility_type=facility_type)
     if blood_type:
@@ -116,7 +117,8 @@ def facility_search(request):
         'facility_type': facility_type,
         'blood_type_choices': BLOOD_TYPES,
         'facility_type_choices': Facility.FACILITY_TYPES,
-        'states': Facility.objects.values_list('state', flat=True).distinct().order_by('state'),
+        'states': NIGERIA_STATES,
+        'states_lgas': NIGERIA_STATES_LGAS,
         'searched': bool(state or lga or blood_type or facility_type),
     }
     return render(request, 'search/results.html', context)
@@ -124,9 +126,12 @@ def facility_search(request):
 
 def leaderboard(request):
     state = request.GET.get('state') or None
-    facilities = get_leaderboard(state=state)
+    lga = request.GET.get('lga') or None
+    facilities = get_leaderboard(state=state, lga=lga)
     return render(request, 'leaderboard.html', {
         'facilities': facilities,
         'selected_state': state,
-        'states': Facility.objects.values_list('state', flat=True).distinct().order_by('state'),
+        'selected_lga': lga,
+        'states': NIGERIA_STATES,
+        'states_lgas': NIGERIA_STATES_LGAS,
     })
